@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>INICET MAY 26 GRIND</title>
+<style>
+:root{
+--bg:#f0f2f5;--card:#fff;--card2:#fafbfd;--text:#1a1a2e;--text2:#475569;--text3:#94a3b8;
+--border:#e2e8f0;--border2:#f1f5f9;--ibg:#f8fafc;
+--pri:#667eea;--pri-d:#5a6fd6;--pri-l:#f0f1ff;--pri-sh:rgba(102,126,234,.35);
+--grn:#10b981;--grn-bg:#ecfdf5;--red:#ef4444;--red-bg:#fef2f2;
+--amb:#f59e0b;--amb-bg:#fffbeb;--pur:#8b5cf6;
+--hdr:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+--stat-bg:rgba(255,255,255,.93);--sh:rgba(0,0,0,.06);--sh2:rgba(0,0,0,.08);
+}
+body.dark{
+--bg:#0f172a;--card:#1e293b;--card2:#1a2332;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+--border:#334155;--border2:#2d3a4a;--ibg:#0f172a;
+--pri-l:#1e293b;--grn-bg:#064e3b44;--red-bg:#7f1d1d44;--amb-bg:#78350f44;
+--hdr:linear-gradient(135deg,#4c63b6 0%,#5b3a8a 100%);
+--stat-bg:rgba(30,41,59,.93);--sh:rgba(0,0,0,.2);--sh2:rgba(0,0,0,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;min-height:100vh}
+
+.header{background:var(--hdr);padding:18px 20px;text-align:center;color:#fff;box-shadow:0 4px 20px rgba(102,126,234,.4);position:relative}
+.header h1{font-size:22px;font-weight:700}.header p{font-size:11px;opacity:.85;margin-top:2px}
+
+.dm-tog{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:5px;cursor:pointer}
+.dm-tog span{font-size:16px}
+.dm-sw{width:40px;height:22px;background:rgba(255,255,255,.25);border-radius:11px;position:relative;transition:.3s}
+.dm-sw::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.3s}
+body.dark .dm-sw::after{left:20px}body.dark .dm-sw{background:rgba(255,255,255,.4)}
+
+.timer-bar{background:var(--card);padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 6px var(--sh);border-bottom:1px solid var(--border);transition:background .3s}
+.timer-d{font-size:26px;font-weight:800;font-family:'Courier New',monospace;color:var(--pri);min-width:120px;text-align:center;letter-spacing:2px}
+.timer-d.warn{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.timer-m{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.timer-m select,.timer-m input{padding:4px 6px;border:2px solid var(--border);border-radius:6px;font-size:11px;background:var(--card);color:var(--text);outline:none}
+.timer-m input{width:50px;text-align:center}
+.timer-btns{display:flex;gap:4px}
+
+.container{max-width:760px;margin:0 auto;padding:12px}
+
+.panel{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px var(--sh);transition:background .3s}
+.p-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.panel h3{font-size:13px;font-weight:700}
+.hint{font-size:10px;color:var(--text3);margin:3px 0 8px}
+.p-tog{font-size:16px;transition:transform .3s;color:var(--text3);user-select:none}
+.p-tog.col{transform:rotate(-90deg)}
+.p-body{overflow:hidden;transition:max-height .3s ease}
+.p-body.col{max-height:0!important;padding:0;margin:0}
+
+.cfg-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.cfg-item{display:flex;flex-direction:column;gap:2px}
+.cfg-item label{font-size:10px;font-weight:600;color:var(--text3)}
+.cfg-item input,.cfg-item select{padding:6px 8px;border:2px solid var(--border);border-radius:7px;font-size:13px;font-weight:600;text-align:center;outline:none;background:var(--ibg);color:var(--text);transition:border-color .2s;width:72px}
+.cfg-item input:focus{border-color:var(--pri)}
+
+.sec-list{margin-top:6px}
+.sec-row{display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--border2)}
+.sec-row:last-child{border-bottom:none}
+.sec-row input{padding:4px 6px;border:2px solid var(--border);border-radius:5px;font-size:11px;outline:none;background:var(--ibg);color:var(--text)}
+.sec-row input.sn{width:100px}.sec-row input.sq{width:44px;text-align:center}
+.sec-row span{font-size:10px;color:var(--text3)}
+.sdel{width:22px;height:22px;border:none;background:var(--red);color:#fff;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+
+.imp-row{display:flex;gap:6px;flex-wrap:wrap}
+.imp-row input[type=text]{flex:1;min-width:150px;padding:8px 10px;border:2px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;letter-spacing:2px;outline:none;background:var(--ibg);color:var(--text)}
+.imp-row input:focus{border-color:var(--pri)}
+
+.btn{padding:7px 12px;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:active{transform:scale(.96)}
+.b-pri{background:var(--pri);color:#fff}.b-pri:hover{background:var(--pri-d)}
+.b-red{background:var(--red);color:#fff}.b-red:hover{opacity:.9}
+.b-grn{background:var(--grn);color:#fff}.b-grn:hover{opacity:.9}
+.b-amb{background:var(--amb);color:#fff}.b-amb:hover{opacity:.9}
+.b-out{background:var(--card);color:var(--text2);border:2px solid var(--border)}
+.b-out:hover{background:var(--ibg);border-color:var(--text3)}
+.b-sm{padding:4px 8px;font-size:10px}
+
+.test-list{margin:8px 0}
+.test-item{display:flex;align-items:center;justify-content:space-between;padding:8px;border:1px solid var(--border);border-radius:7px;margin-bottom:5px}
+.ti-name{font-weight:700;font-size:12px}.ti-info{font-size:10px;color:var(--text3)}
+.ti-acts{display:flex;gap:4px}
+
+.stats-bar{position:sticky;top:0;z-index:100;background:var(--stat-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:12px;padding:10px 6px;margin-bottom:8px;box-shadow:0 4px 20px var(--sh2);display:flex;justify-content:space-around;flex-wrap:wrap;gap:3px}
+.stat{text-align:center;min-width:50px}
+.stat-l{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);font-weight:700;margin-bottom:1px}
+.stat-v{font-size:18px;font-weight:800;line-height:1.2}.stat-v small{font-size:10px;font-weight:600;opacity:.55}
+.c-bl{color:var(--pri)}.c-gn{color:var(--grn)}.c-rd{color:var(--red)}.c-pr{color:var(--pur)}.c-am{color:var(--amb)}
+
+.prog-w{background:var(--border);border-radius:10px;height:4px;margin-bottom:10px;overflow:hidden}
+.prog-f{height:100%;width:0;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:10px;transition:width .4s ease}
+
+.sh{background:var(--pri);color:#fff;padding:7px 12px;font-size:12px;font-weight:700;display:flex;justify-content:space-between}
+
+.q-con{background:var(--card);border-radius:12px;box-shadow:0 2px 8px var(--sh);overflow:hidden;margin-bottom:10px;transition:background .3s}
+.q-row{display:flex;align-items:center;padding:5px 8px;gap:4px;border-bottom:1px solid var(--border2);transition:background .3s}
+.q-row:last-child{border-bottom:none}
+.q-row:nth-child(even){background:var(--card2)}
+.q-row.rc{background:var(--grn-bg)!important}.q-row.rw{background:var(--red-bg)!important}
+.q-row.rv{border-left:3px solid var(--amb)}
+
+.qn{min-width:26px;font-size:11px;font-weight:700;color:var(--text3);text-align:right;padding-right:2px}
+.qo{display:flex;gap:3px}
+.ob{width:30px;height:30px;border:2px solid var(--border);border-radius:6px;background:var(--card);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;padding:0}
+.ob:hover{border-color:var(--pri);background:var(--pri-l);color:var(--pri)}
+.ob:active{transform:scale(.88)}
+.ob.sel{background:var(--pri);border-color:var(--pri);color:#fff;box-shadow:0 2px 8px var(--pri-sh)}
+
+.qr{width:22px;height:22px;border:none;border-radius:5px;background:transparent;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--text3)}
+.qr:hover{background:var(--amb-bg)}.qr.fl{color:var(--amb);background:var(--amb-bg)}
+
+.qa{display:flex;align-items:center;gap:1px;margin-left:auto}
+.br{font-size:15px;font-weight:800;color:var(--text3);user-select:none}
+.ai{width:24px;height:24px;border:2px solid var(--border);border-radius:5px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;outline:none;transition:all .2s;padding:0;color:var(--text);background:var(--ibg)}
+.ai:focus{border-color:var(--pri);background:var(--card);box-shadow:0 0 0 3px rgba(102,126,234,.15)}
+
+.qx{min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border-radius:50%}
+.qx.xc{color:var(--grn);background:var(--grn-bg)}.qx.xw{color:var(--red);background:var(--red-bg)}
+
+.acts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+
+.nav-t{position:fixed;bottom:20px;left:20px;width:42px;height:42px;border-radius:50%;background:var(--pri);color:#fff;border:none;font-size:16px;cursor:pointer;box-shadow:0 4px 15px var(--pri-sh);z-index:101;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.nav-t:hover{transform:translateY(-3px)}
+
+.nav-p{position:fixed;bottom:72px;left:20px;width:260px;max-height:65vh;background:var(--card);border-radius:12px;box-shadow:0 8px 30px var(--sh2);z-index:100;padding:12px;overflow-y:auto;transform:translateY(20px);opacity:0;pointer-events:none;transition:all .3s}
+.nav-p.open{transform:translateY(0);opacity:1;pointer-events:all}
+.nav-p h4{font-size:12px;margin-bottom:6px;font-weight:700}
+.nav-leg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;font-size:9px}
+.nav-leg span{display:flex;align-items:center;gap:2px}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.nav-g{display:grid;grid-template-columns:repeat(10,1fr);gap:2px}
+.nb{width:100%;aspect-ratio:1;border:1px solid var(--border);border-radius:3px;background:var(--card);color:var(--text2);font-size:9px;font-weight:600;cursor:pointer;transition:all .15s;padding:0}
+.nb:hover{border-color:var(--pri)}
+.nb.na{background:var(--pri);color:#fff;border-color:var(--pri)}
+.nb.nc{background:var(--grn);color:#fff;border-color:var(--grn)}
+.nb.nw{background:var(--red);color:#fff;border-color:var(--red)}
+.nb.nr{box-shadow:0 0 0 2px var(--amb)}
+
+.st{position:fixed;bottom:20px;right:20px;width:42px;height:42px;border-radius:50%;background:var(--pri);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:0 4px 15px var(--pri-sh);display:none;align-items:center;justify-content:center;z-index:99;transition:all .3s}
+.st.vis{display:flex}.st:hover{transform:translateY(-3px)}
+
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(4px)}
+.mo.open{display:flex}
+.modal{background:var(--card);border-radius:14px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.mc{position:sticky;top:0;float:right;width:30px;height:30px;border:none;background:var(--border);border-radius:50%;font-size:14px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;z-index:5}
+.mc:hover{background:var(--red);color:#fff}
+
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:14px 0}
+.rcard{background:var(--ibg);border-radius:8px;padding:12px;text-align:center}
+.rv2{font-size:24px;font-weight:800}.rl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-top:2px}
+
+.sr{margin:10px 0}.sr table{width:100%;border-collapse:collapse;font-size:11px}
+.sr th{background:var(--pri);color:#fff;padding:6px 8px;text-align:left;font-weight:600}
+.sr td{padding:5px 8px;border-bottom:1px solid var(--border)}
+.sr tr:hover td{background:var(--pri-l)}
+
+.bc{margin:10px 0}.br2{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.bl{font-size:10px;font-weight:600;min-width:70px;text-align:right;color:var(--text2)}
+.bt{flex:1;height:16px;background:var(--border);border-radius:8px;overflow:hidden}
+.bf{height:100%;border-radius:8px;transition:width .5s ease;display:flex;align-items:center;padding-left:6px;font-size:9px;font-weight:700;color:#fff;min-width:fit-content}
+.bf-g{background:var(--grn)}.bf-r{background:var(--red)}.bf-b{background:var(--pri)}
+
+.ht{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+.ht th{background:var(--pri);color:#fff;padding:6px;text-align:left}
+.ht td{padding:5px 6px;border-bottom:1px solid var(--border)}
+.ht tr:hover td{background:var(--pri-l)}
+.he{text-align:center;padding:25px;color:var(--text3);font-size:13px}
+
+@keyframes pop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+.qx.an{animation:pop .3s ease forwards}
+
+@media(max-width:520px){
+.header h1{font-size:17px}.header{padding:14px 10px}.dm-tog{top:8px;right:8px}
+.timer-d{font-size:20px}.timer-bar{padding:6px 8px;gap:6px}
+.stats-bar{padding:7px 3px}.stat{min-width:42px}.stat-v{font-size:14px}.stat-l{font-size:7px}
+.q-row{padding:3px 5px;gap:2px}.qn{min-width:20px;font-size:9px}
+.ob{width:24px;height:24px;font-size:9px;border-radius:4px}
+.ai{width:20px;height:20px;font-size:9px}.br{font-size:12px}
+.qx{min-width:18px;height:18px;font-size:12px}.qr{width:18px;height:18px;font-size:10px}
+.nav-p{width:220px;left:8px;bottom:62px}.nav-t{bottom:14px;left:14px;width:36px;height:36px}
+.st{bottom:14px;right:14px;width:36px;height:36px}
+.cfg-row{flex-direction:column;gap:6px}.imp-row{flex-direction:column}
+.sh{font-size:10px;padding:5px 8px}
+.rg{grid-template-columns:repeat(3,1fr);gap:6px}.rv2{font-size:18px}
+.acts{gap:4px}.btn{padding:5px 8px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>📝 INICET MAY 26 GRIND</h1>
+<p>Keep Swimming →TnD </p>
+<div class="dm-tog" onclick="togDark()"><span id="dmL">🌙</span><div class="dm-sw"></div></div>
+</div>
+
+<div class="timer-bar">
+<div class="timer-m">
+<select id="tMode" onchange="swTimerMode()"><option value="sw">⏱ Stopwatch</option><option value="cd">⏳ Countdown</option></select>
+<div id="tLimW" style="display:none"><input type="number" id="tMin" value="180" min="1" max="999"> min</div>
+</div>
+<div class="timer-d" id="tDisp">00:00:00</div>
+<div class="timer-btns">
+<button class="btn b-grn b-sm" id="tBtn" onclick="togTimer()">▶ Start</button>
+<button class="btn b-out b-sm" onclick="rstTimer()">↺ Reset</button>
+</div>
+</div>
+
+<div class="container">
+
+<div class="panel">
+<div class="p-hdr" onclick="togP('sBody')"><h3>⚙️ Settings & Sections</h3><span class="p-tog" id="sBodyT">▼</span></div>
+<div class="p-body" id="sBody">
+<div class="cfg-row" style="margin-top:8px">
+<div class="cfg-item"><label>Total Questions</label><input type="number" id="inpTQ" value="100" min="1" max="500" onchange="chgTQ()"></div>
+<div class="cfg-item"><label>Default +Marks</label><input type="number" id="dCM" value="4" min="0" step="0.25" onchange="recalc();saveS()"></div>
+<div class="cfg-item"><label>Default −Marks</label><input type="number" id="dWM" value="1" min="0" step="0.25" onchange="recalc();saveS()"></div>
+</div>
+<p class="hint">Add sections for subject-wise analysis & per-section marking</p>
+<div class="sec-list" id="secL"></div>
+<button class="btn b-out b-sm" onclick="addSec()" style="margin-top:5px">+ Add Section</button>
+</div>
+</div>
+
+<div class="panel">
+<div class="p-hdr" onclick="togP('iBody')"><h3>📋 Import Answer Key</h3><span class="p-tog" id="iBodyT">▼</span></div>
+<div class="p-body" id="iBody">
+<p class="hint">Paste correct answers (e.g. ABCDABCD…). Non A-D characters ignored.</p>
+<div class="imp-row">
+<input type="text" id="keyIn" placeholder="ABCDA BCDAB CDABC…" spellcheck="false" autocomplete="off">
+<div style="display:flex;gap:4px"><button class="btn b-pri" onclick="impKey()">Import</button><button class="btn b-out" onclick="clrKey()">Clear Key</button></div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="p-hdr" onclick="togP('tmBody')"><h3>💾 Test Manager</h3><span class="p-tog col" id="tmBodyT">▼</span></div>
+<div class="p-body col" id="tmBody">
+<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap">
+<input type="text" id="tnIn" placeholder="Test name..." style="flex:1;min-width:130px;padding:7px 10px;border:2px solid var(--border);border-radius:7px;font-size:12px;outline:none;background:var(--ibg);color:var(--text)">
+<button class="btn b-pri" onclick="saveTest()">💾 Save</button>
+</div>
+<div class="test-list" id="tList"></div>
+</div>
+</div>
+
+<div class="stats-bar" id="sBar">
+<div class="stat"><span class="stat-l">Attempted</span><span class="stat-v c-bl" id="sA">0<small>/100</small></span></div>
+<div class="stat"><span class="stat-l">Correct</span><span class="stat-v c-gn" id="sC">0</span></div>
+<div class="stat"><span class="stat-l">Wrong</span><span class="stat-v c-rd" id="sW">0</span></div>
+<div class="stat"><span class="stat-l">Score</span><span class="stat-v c-pr" id="sS">0</span></div>
+<div class="stat"><span class="stat-l">Accuracy</span><span class="stat-v c-am" id="sAc">0%</span></div>
+<div class="stat"><span class="stat-l">Review</span><span class="stat-v c-am" id="sR">0</span></div>
+</div>
+
+<div class="prog-w"><div class="prog-f" id="pBar"></div></div>
+
+<div id="qBox"></div>
+
+<div class="acts">
+<button class="btn b-pri" onclick="openRep()">📊 Report</button>
+<button class="btn b-grn" onclick="openHist()">📈 History</button>
+<button class="btn b-amb" onclick="saveHist()">💾 Save Result</button>
+<button class="btn b-out" onclick="expCSV()">📤 CSV</button>
+<button class="btn b-out" onclick="printRep()">🖨️ Print</button>
+<button class="btn b-out" onclick="clrMine()">Clear Answers</button>
+<button class="btn b-out" onclick="clrKey()">Clear Key</button>
+<button class="btn b-red" onclick="rstAll()">🔄 Reset All</button>
+</div>
+</div>
+
+<button class="nav-t" onclick="togNav()">☰</button>
+<div class="nav-p" id="navP">
+<h4>📱 Question Navigator</h4>
+<div class="nav-leg">
+<span><span class="dot" style="background:var(--border)"></span> Empty</span>
+<span><span class="dot" style="background:var(--pri)"></span> Attempted</span>
+<span><span class="dot" style="background:var(--grn)"></span> Correct</span>
+<span><span class="dot" style="background:var(--red)"></span> Wrong</span>
+<span><span class="dot" style="background:var(--amb)"></span> Review</span>
+</div>
+<div class="nav-g" id="navG"></div>
+<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">
+<button class="btn b-out b-sm" onclick="jumpNext('unanswered')">→ Next Unanswered</button>
+<button class="btn b-out b-sm" onclick="jumpNext('review')">→ Next Review</button>
+</div>
+</div>
+
+<button class="st" id="scBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="mo" id="repM"><div class="modal"><button class="mc" onclick="clsM('repM')">✕</button><h2>📊 Detailed Report</h2><div id="repC"></div></div></div>
+<div class="mo" id="hisM"><div class="modal"><button class="mc" onclick="clsM('hisM')">✕</button><h2>📈 Performance History</h2><div id="hisC"></div></div></div>
+
+<script>
+let TQ=100,mk={},ck={},rv={},secs=[],tInt=null,tEl=0,tRun=false;
+
+document.addEventListener('DOMContentLoaded',()=>{ldS();bldSec();build();resS();recalc();updNav();ldTests();
+window.addEventListener('scroll',()=>{document.getElementById('scBtn').classList.toggle('vis',window.scrollY>400)});
+document.addEventListener('click',e=>{if(e.target.classList.contains('mo'))e.target.classList.remove('open');
+if(!e.target.closest('.nav-p')&&!e.target.closest('.nav-t'))document.getElementById('navP').classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.mo.open').forEach(m=>m.classList.remove('open'));document.getElementById('navP').classList.remove('open')}})});
+
+function togDark(){document.body.classList.toggle('dark');document.getElementById('dmL').textContent=document.body.classList.contains('dark')?'☀️':'🌙';saveS()}
+
+function togP(id){const b=document.getElementById(id),t=document.getElementById(id+'T');b.classList.toggle('col');t.classList.toggle('col')}
+
+/* TIMER */
+function swTimerMode(){document.getElementById('tLimW').style.display=document.getElementById('tMode').value==='cd'?'inline-flex':'none';rstTimer()}
+function togTimer(){tRun?pauseT():startT()}
+function startT(){if(tRun)return;tRun=true;document.getElementById('tBtn').innerHTML='⏸ Pause';
+const cd=document.getElementById('tMode').value==='cd';
+if(cd&&tEl===0)tEl=(parseInt(document.getElementById('tMin').value)||180)*60;
+tInt=setInterval(()=>{if(cd){tEl--;if(tEl<=0){tEl=0;pauseT();alert('⏰ Time is up!')}}else tEl++;updTD()},1000)}
+function pauseT(){tRun=false;clearInterval(tInt);document.getElementById('tBtn').innerHTML='▶ Start'}
+function rstTimer(){pauseT();tEl=0;updTD()}
+function updTD(){const s=Math.abs(tEl),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;
+const d=document.getElementById('tDisp');d.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`;
+d.classList.toggle('warn',document.getElementById('tMode').value==='cd'&&tEl<300&&tEl>0)}
+
+/* SECTIONS */
+function bldSec(){const l=document.getElementById('secL');l.innerHTML='';
+secs.forEach((s,i)=>{const r=document.createElement('div');r.className='sec-row';
+r.innerHTML=`<input class="sn" value="${s.name}" placeholder="Name" onchange="uSec(${i},'name',this.value)">
+<input class="sq" type="number" value="${s.start}" min="1" onchange="uSec(${i},'start',+this.value)">
+<span>to</span><input class="sq" type="number" value="${s.end}" min="1" onchange="uSec(${i},'end',+this.value)">
+<span>+</span><input class="sq" type="number" value="${s.cm}" min="0" step="0.25" onchange="uSec(${i},'cm',+this.value)">
+<span>−</span><input class="sq" type="number" value="${s.wm}" min="0" step="0.25" onchange="uSec(${i},'wm',+this.value)">
+<button class="sdel" onclick="dSec(${i})">✕</button>`;l.appendChild(r)})}
+function addSec(){const s=secs.length>0?secs[secs.length-1].end+1:1;
+secs.push({name:'Section '+(secs.length+1),start:s,end:Math.min(s+24,TQ),cm:parseFloat(document.getElementById('dCM').value)||4,wm:parseFloat(document.getElementById('dWM').value)||1});
+bldSec();rebuild();saveS()}
+function dSec(i){secs.splice(i,1);bldSec();rebuild();saveS()}
+function uSec(i,k,v){secs[i][k]=v;rebuild();recalc();saveS()}
+function getQM(q){for(const s of secs)if(q>=s.start&&q<=s.end)return{cm:s.cm,wm:s.wm};
+return{cm:parseFloat(document.getElementById('dCM').value)||0,wm:parseFloat(document.getElementById('dWM').value)||0}}
+
+/* BUILD */
+function build(){const box=document.getElementById('qBox');box.innerHTML='';
+if(secs.length>0){let cov=new Set();
+secs.forEach(s=>{const c=document.createElement('div');c.className='q-con';
+const h=document.createElement('div');h.className='sh';h.innerHTML=`<span>${esc(s.name)}</span><span>Q${s.start}–Q${s.end} | +${s.cm}/−${s.wm}</span>`;
+c.appendChild(h);for(let i=s.start;i<=Math.min(s.end,TQ);i++){c.appendChild(mkRow(i));cov.add(i)}box.appendChild(c)});
+let unc=[];for(let i=1;i<=TQ;i++)if(!cov.has(i))unc.push(i);
+if(unc.length){const c=document.createElement('div');c.className='q-con';
+const h=document.createElement('div');h.className='sh';h.innerHTML='<span>Other Questions</span><span>Default marks</span>';
+c.appendChild(h);unc.forEach(i=>c.appendChild(mkRow(i)));box.appendChild(c)}}
+else{const c=document.createElement('div');c.className='q-con';for(let i=1;i<=TQ;i++)c.appendChild(mkRow(i));box.appendChild(c)}
+bldNav()}
+
+function mkRow(i){const r=document.createElement('div');r.className='q-row';r.id='r'+i;
+r.innerHTML=`<div class="qn">${i}</div><div class="qo">
+<button class="ob" id="o${i}A" onclick="sel(${i},'A')">A</button>
+<button class="ob" id="o${i}B" onclick="sel(${i},'B')">B</button>
+<button class="ob" id="o${i}C" onclick="sel(${i},'C')">C</button>
+<button class="ob" id="o${i}D" onclick="sel(${i},'D')">D</button></div>
+<button class="qr" id="rv${i}" onclick="togRv(${i})" title="Mark for review">🚩</button>
+<div class="qa"><span class="br">[</span><input class="ai" id="c${i}" maxlength="1" autocomplete="off" spellcheck="false"><span class="br">]</span></div>
+<div class="qx" id="x${i}"></div>`;wireIn(r.querySelector('.ai'),i);return r}
+
+function wireIn(inp,n){inp.addEventListener('keydown',function(e){const k=e.key.toUpperCase();
+if('ABCD'.includes(k)&&k.length===1){e.preventDefault();this.value=k;ck[n]=k;show(n);recalc();updNB(n);saveS();
+if(n<TQ){const nx=document.getElementById('c'+(n+1));if(nx)nx.focus()}}
+else if(e.key==='Backspace'||e.key==='Delete'){e.preventDefault();this.value='';delete ck[n];show(n);recalc();updNB(n);saveS();
+if(e.key==='Backspace'&&n>1){const pv=document.getElementById('c'+(n-1));if(pv)pv.focus()}}
+else if(e.key==='ArrowUp'&&n>1){e.preventDefault();const p=document.getElementById('c'+(n-1));if(p)p.focus()}
+else if(e.key==='ArrowDown'&&n<TQ){e.preventDefault();const nx=document.getElementById('c'+(n+1));if(nx)nx.focus()}
+else if(e.key!=='Tab')e.preventDefault()});
+inp.addEventListener('paste',e=>e.preventDefault());inp.addEventListener('drop',e=>e.preventDefault())}
+
+function rebuild(){build();resS();recalc();updNav()}
+function chgTQ(){const n=parseInt(document.getElementById('inpTQ').value)||100;if(n<1||n>500){alert('Enter 1–500');return}
+TQ=n;[mk,ck,rv].forEach(o=>Object.keys(o).forEach(k=>{if(+k>TQ)delete o[k]}));rebuild();saveS()}
+
+/* SELECT / REVIEW */
+function sel(n,o){if(mk[n]===o){delete mk[n];document.getElementById('o'+n+o).classList.remove('sel')}
+else{'ABCD'.split('').forEach(x=>{const b=document.getElementById('o'+n+x);if(b)b.classList.remove('sel')});mk[n]=o;document.getElementById('o'+n+o).classList.add('sel')}
+show(n);recalc();updNB(n);saveS()}
+
+function togRv(n){if(rv[n])delete rv[n];else rv[n]=true;
+const b=document.getElementById('rv'+n),rw=document.getElementById('r'+n);
+if(b)b.classList.toggle('fl',!!rv[n]);if(rw)rw.classList.toggle('rv',!!rv[n]);recalc();updNB(n);saveS()}
+
+function show(n){const el=document.getElementById('x'+n),rw=document.getElementById('r'+n);
+if(!el||!rw)return;rw.classList.remove('rc','rw');el.classList.remove('xc','xw','an');
+if(mk[n]&&ck[n]){void el.offsetWidth;
+if(mk[n]===ck[n]){el.textContent='✓';el.classList.add('xc','an');rw.classList.add('rc')}
+else{el.textContent='✗';el.classList.add('xw','an');rw.classList.add('rw')}}else el.textContent='';
+if(rv[n])rw.classList.add('rv')}
+
+/* STATS */
+function recalc(){let att=0,cor=0,wrn=0,sc=0,rvc=0;
+for(let i=1;i<=TQ;i++){if(rv[i])rvc++;if(mk[i]){att++;if(ck[i]){const m=getQM(i);if(mk[i]===ck[i]){cor++;sc+=m.cm}else{wrn++;sc-=m.wm}}}}
+const chk=cor+wrn,acc=chk>0?((cor/chk)*100).toFixed(1):'0.0';
+document.getElementById('sA').innerHTML=att+'<small>/'+TQ+'</small>';
+document.getElementById('sC').textContent=cor;document.getElementById('sW').textContent=wrn;
+document.getElementById('sS').textContent=sc%1===0?sc:sc.toFixed(2);
+document.getElementById('sAc').textContent=acc+'%';document.getElementById('sR').textContent=rvc;
+document.getElementById('pBar').style.width=((att/TQ)*100)+'%'}
+
+/* IMPORT / CLEAR */
+function impKey(){const raw=document.getElementById('keyIn').value.toUpperCase().replace(/[^ABCD]/g,'');
+if(!raw){alert('Enter a valid key using A,B,C,D.');return}const len=Math.min(raw.length,TQ);
+for(let i=0;i<len;i++){ck[i+1]=raw[i];const inp=document.getElementById('c'+(i+1));if(inp){inp.value=raw[i];show(i+1)}}
+recalc();updNav();saveS();alert('✅ Imported '+len+' answer(s)!')}
+
+function clrKey(){if(!Object.keys(ck).length)return;if(!confirm('Clear all correct answers?'))return;
+for(let i=1;i<=TQ;i++){delete ck[i];const inp=document.getElementById('c'+i);if(inp){inp.value='';show(i)}}
+document.getElementById('keyIn').value='';recalc();updNav();saveS()}
+
+function clrMine(){if(!Object.keys(mk).length)return;if(!confirm('Clear all your marked answers?'))return;
+for(let i=1;i<=TQ;i++){delete mk[i];'ABCD'.split('').forEach(o=>{const b=document.getElementById('o'+i+o);if(b)b.classList.remove('sel')});show(i)}
+recalc();updNav();saveS()}
+
+function rstAll(){if(!confirm('Reset everything?'))return;mk={};ck={};rv={};secs=[];TQ=100;
+document.getElementById('inpTQ').value=100;document.getElementById('dCM').value=4;document.getElementById('dWM').value=1;
+document.getElementById('keyIn').value='';document.body.classList.remove('dark');document.getElementById('dmL').textContent='🌙';
+rstTimer();bldSec();rebuild();localStorage.removeItem('tPro')}
+
+/* NAV */
+function togNav(){document.getElementById('navP').classList.toggle('open')}
+function bldNav(){const g=document.getElementById('navG');g.innerHTML='';
+for(let i=1;i<=TQ;i++){const b=document.createElement('button');b.className='nb';b.id='nb'+i;b.textContent=i;
+b.onclick=()=>{const r=document.getElementById('r'+i);if(r)r.scrollIntoView({behavior:'smooth',block:'center'})};g.appendChild(b)}}
+function updNav(){for(let i=1;i<=TQ;i++)updNB(i)}
+function updNB(i){const b=document.getElementById('nb'+i);if(!b)return;b.className='nb';
+if(mk[i]&&ck[i])b.classList.add(mk[i]===ck[i]?'nc':'nw');else if(mk[i])b.classList.add('na');
+if(rv[i])b.classList.add('nr')}
+
+function jumpNext(type){for(let i=1;i<=TQ;i++){
+if(type==='unanswered'&&!mk[i]){const r=document.getElementById('r'+i);if(r){r.scrollIntoView({behavior:'smooth',block:'center'});return}}
+if(type==='review'&&rv[i]){const r=document.getElementById('r'+i);if(r){r.scrollIntoView({behavior:'smooth',block:'center'});return}}}
+alert(type==='unanswered'?'All questions answered!':'No questions marked for review.')}
+
+/* REPORT */
+function gStats(){let att=0,cor=0,wrn=0,sc=0,mx=0;let ss={};
+secs.forEach(s=>{ss[s.name]={att:0,cor:0,wrn:0,sc:0,tot:Math.min(s.end,TQ)-s.start+1,mx:(Math.min(s.end,TQ)-s.start+1)*s.cm}});
+for(let i=1;i<=TQ;i++){const m=getQM(i);mx+=m.cm;let sn=null;
+for(const s of secs)if(i>=s.start&&i<=s.end){sn=s.name;break}
+if(mk[i]){att++;if(sn&&ss[sn])ss[sn].att++;if(ck[i]){if(mk[i]===ck[i]){cor++;sc+=m.cm;if(sn&&ss[sn]){ss[sn].cor++;ss[sn].sc+=m.cm}}
+else{wrn++;sc-=m.wm;if(sn&&ss[sn]){ss[sn].wrn++;ss[sn].sc-=m.wm}}}}}
+return{att,cor,wrn,sc,mx,ss,TQ,acc:(cor+wrn)>0?((cor/(cor+wrn))*100).toFixed(1):'0.0'}}
+
+function openRep(){const s=gStats(),rc=document.getElementById('repC');
+let h=`<div class="rg">
+<div class="rcard"><div class="rv2 c-bl">${s.att}/${s.TQ}</div><div class="rl">Attempted</div></div>
+<div class="rcard"><div class="rv2 c-gn">${s.cor}</div><div class="rl">Correct</div></div>
+<div class="rcard"><div class="rv2 c-rd">${s.wrn}</div><div class="rl">Wrong</div></div>
+<div class="rcard"><div class="rv2 c-pr">${fmt(s.sc)}</div><div class="rl">Score</div></div>
+<div class="rcard"><div class="rv2 c-am">${s.acc}%</div><div class="rl">Accuracy</div></div>
+<div class="rcard"><div class="rv2" style="color:var(--text2)">${s.mx}</div><div class="rl">Max Marks</div></div></div>
+<h3 style="margin:14px 0 6px">📊 Performance Overview</h3><div class="bc">
+<div class="br2"><span class="bl">Correct</span><div class="bt"><div class="bf bf-g" style="width:${s.att>0?(s.cor/s.att*100):0}%">${s.cor}</div></div></div>
+<div class="br2"><span class="bl">Wrong</span><div class="bt"><div class="bf bf-r" style="width:${s.att>0?(s.wrn/s.att*100):0}%">${s.wrn}</div></div></div>
+<div class="br2"><span class="bl">Unattempted</span><div class="bt"><div class="bf bf-b" style="width:${(s.TQ-s.att)/s.TQ*100}%">${s.TQ-s.att}</div></div></div></div>`;
+
+if(secs.length>0){h+=`<h3 style="margin:14px 0 6px">🏷️ Section-wise Breakdown</h3><div class="sr"><table>
+<tr><th>Section</th><th>Att</th><th>Cor</th><th>Wrn</th><th>Score</th><th>Max</th><th>Acc</th></tr>`;
+for(const sec of secs){const d=s.ss[sec.name];if(!d)continue;
+const a=(d.cor+d.wrn)>0?((d.cor/(d.cor+d.wrn))*100).toFixed(1)+' %':'-';
+h+=`<tr><td><b>${esc(sec.name)}</b></td><td>${d.att}/${d.tot}</td><td>${d.cor}</td><td>${d.wrn}</td><td>${fmt(d.sc)}</td><td>${d.mx}</td><td>${a}</td></tr>`}
+h+=`</table></div><div class="bc">`;
+for(const sec of secs){const d=s.ss[sec.name];if(!d)continue;const p=d.tot>0?(d.cor/d.tot*100).toFixed(0):0;
+h+=`<div class="br2"><span class="bl">${esc(sec.name)}</span><div class="bt"><div class="bf bf-g" style="width:${p}%">${p}%</div></div></div>`}
+h+=`</div>`}
+
+h+=`<h3 style="margin:14px 0 6px">📋 Question-wise Analysis</h3>
+<div class="sr" style="max-height:280px;overflow-y:auto"><table>
+<tr><th>Q#</th><th>Yours</th><th>Correct</th><th>Result</th><th>Marks</th></tr>`;
+for(let i=1;i<=TQ;i++){const my=mk[i]||'-',co=ck[i]||'-';let res='-',ms='-',cl='';
+if(mk[i]&&ck[i]){const m=getQM(i);if(mk[i]===ck[i]){res='✓';ms='+'+m.cm;cl='style="color:var(--grn)"'}
+else{res='✗';ms='-'+m.wm;cl='style="color:var(--red)"'}}
+h+=`<tr><td>${i}</td><td>${my}</td><td>${co}</td><td ${cl}>${res}</td><td ${cl}>${ms}</td></tr>`}
+h+=`</table></div>`;rc.innerHTML=h;document.getElementById('repM').classList.add('open')}
+
+function clsM(id){document.getElementById(id).classList.remove('open')}
+
+/* HISTORY */
+function saveHist(){const nm=prompt('Enter test name:','Test '+new Date().toLocaleDateString());if(!nm)return;
+const s=gStats(),hi=JSON.parse(localStorage.getItem('tHist')||'[]');
+hi.push({date:new Date().toLocaleString(),name:nm,tq:s.TQ,att:s.att,cor:s.cor,wrn:s.wrn,sc:s.sc,mx:s.mx,acc:s.acc,time:document.getElementById('tDisp').textContent});
+localStorage.setItem('tHist',JSON.stringify(hi));alert('✅ Result saved!')}
+
+function openHist(){const hi=JSON.parse(localStorage.getItem('tHist')||'[]'),hc=document.getElementById('hisC');
+if(!hi.length){hc.innerHTML='<div class="he">No history yet. Save a result first!</div>'}
+else{let h=`<table class="ht"><tr><th>#</th><th>Name</th><th>Date</th><th>Att</th><th>Cor</th><th>Wrn</th><th>Score</th><th>Max</th><th>Acc</th><th>Time</th><th></th></tr>`;
+hi.forEach((r,i)=>{h+=`<tr><td>${i+1}</td><td><b>${esc(r.name)}</b></td><td>${r.date}</td>
+<td>${r.att}/${r.tq}</td><td>${r.cor}</td><td>${r.wrn}</td><td><b>${fmt(r.sc)}</b></td><td>${r.mx}</td>
+<td>${r.acc}%</td><td>${r.time||'-'}</td><td><button class="btn b-red b-sm" onclick="dHist(${i})">✕</button></td></tr>`});
+h+=`</table>`;
+if(hi.length>1){h+=`<h3 style="margin:14px 0 6px">📈 Score Trend</h3><div class="bc">`;
+const mxS=Math.max(...hi.map(r=>r.sc),1);
+hi.forEach(r=>{const p=Math.max((r.sc/mxS*100),0).toFixed(0);
+h+=`<div class="br2"><span class="bl">${esc(r.name)}</span><div class="bt"><div class="bf bf-g" style="width:${p}%">${fmt(r.sc)}</div></div></div>`});
+h+=`</div>`}
+h+=`<div style="text-align:center;margin-top:12px"><button class="btn b-red" onclick="cHist()">🗑️ Clear All</button></div>`;
+hc.innerHTML=h}document.getElementById('hisM').classList.add('open')}
+
+function dHist(i){const hi=JSON.parse(localStorage.getItem('tHist')||'[]');hi.splice(i,1);localStorage.setItem('tHist',JSON.stringify(hi));openHist()}
+function cHist(){if(!confirm('Clear all history?'))return;localStorage.removeItem('tHist');openHist()}
+
+/* TEST MANAGER */
+function saveTest(){const nm=document.getElementById('tnIn').value.trim();if(!nm){alert('Enter a test name');return}
+const ts=JSON.parse(localStorage.getItem('tTests')||'{}');
+ts[nm]={TQ,mk:{...mk},ck:{...ck},rv:{...rv},secs:JSON.parse(JSON.stringify(secs)),dCM:document.getElementById('dCM').value,dWM:document.getElementById('dWM').value,date:new Date().toLocaleString()};
+localStorage.setItem('tTests',JSON.stringify(ts));document.getElementById('tnIn').value='';ldTests();alert('✅ Test saved!')}
+
+function ldTests(){const ts=JSON.parse(localStorage.getItem('tTests')||'{}'),l=document.getElementById('tList');l.innerHTML='';
+const nms=Object.keys(ts);if(!nms.length){l.innerHTML='<p style="font-size:11px;color:var(--text3);padding:8px">No saved tests.</p>';return}
+nms.forEach(nm=>{const t=ts[nm],it=document.createElement('div');it.className='test-item';
+const inf=document.createElement('div');inf.innerHTML=`<div class="ti-name">${esc(nm)}</div><div class="ti-info">${t.date} | ${t.TQ} Q</div>`;
+const ac=document.createElement('div');ac.className='ti-acts';
+const lb=document.createElement('button');lb.className='btn b-pri b-sm';lb.textContent='Load';lb.onclick=()=>ldTest(nm);
+const db=document.createElement('button');db.className='btn b-red b-sm';db.textContent='✕';db.onclick=()=>dTest(nm);
+ac.appendChild(lb);ac.appendChild(db);it.appendChild(inf);it.appendChild(ac);l.appendChild(it)})}
+
+function ldTest(nm){if(!confirm('Load "'+nm+'"? Current data replaced.'))return;
+const ts=JSON.parse(localStorage.getItem('tTests')||'{}'),t=ts[nm];if(!t)return;
+TQ=t.TQ||100;mk=t.mk||{};ck=t.ck||{};rv=t.rv||{};secs=t.secs||[];
+document.getElementById('inpTQ').value=TQ;document.getElementById('dCM').value=t.dCM||4;document.getElementById('dWM').value=t.dWM||1;
+bldSec();rebuild();saveS()}
+
+function dTest(nm){if(!confirm('Delete "'+nm+'"?'))return;
+const ts=JSON.parse(localStorage.getItem('tTests')||'{}');delete ts[nm];localStorage.setItem('tTests',JSON.stringify(ts));ldTests()}
+
+/* EXPORT */
+function expCSV(){let csv='Question,Your Answer,Correct Answer,Result,Marks\n';
+for(let i=1;i<=TQ;i++){const my=mk[i]||'',co=ck[i]||'';let res='',ms='';
+if(mk[i]&&ck[i]){const m=getQM(i);if(mk[i]===ck[i]){res='Correct';ms='+'+m.cm}else{res='Wrong';ms='-'+m.wm}}
+else if(mk[i])res='Attempted';else res='Unattempted';csv+=`${i},${my},${co},${res},${ms}\n`}
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+a.download='test_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
+
+function printRep(){const s=gStats(),w=window.open('','_blank');
+let sh='';if(secs.length>0){sh='<h3>Section-wise</h3><table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;width:100%"><tr><th>Section</th><th>Att</th><th>Cor</th><th>Wrn</th><th>Score</th><th>Max</th><th>Acc</th></tr>';
+for(const sec of secs){const d=s.ss[sec.name];if(!d)continue;const a=(d.cor+d.wrn)>0?((d.cor/(d.cor+d.wrn))*100).toFixed(1)+'%':'-';
+sh+=`<tr><td>${sec.name}</td><td>${d.att}/${d.tot}</td><td>${d.cor}</td><td>${d.wrn}</td><td>${fmt(d.sc)}</td><td>${d.mx}</td><td>${a}</td></tr>`}sh+='</table>'}
+let qh='<h3>Questions</h3><table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;width:100%;font-size:11px"><tr><th>Q#</th><th>Yours</th><th>Correct</th><th>Result</th></tr>';
+for(let i=1;i<=TQ;i++){const my=mk[i]||'-',co=ck[i]||'-';let res='-',cl='';
+if(mk[i]&&ck[i]){if(mk[i]===ck[i]){res='✓';cl='color:green'}else{res='✗';cl='color:red'}}
+qh+=`<tr><td>${i}</td><td>${my}</td><td>${co}</td><td style="${cl};font-weight:bold">${res}</td></tr>`}qh+='</table>';
+w.document.write(`<!DOCTYPE html><html><head><title>Report</title><style>body{font-family:Arial,sans-serif;padding:20px;max-width:700px;margin:auto}h1{color:#667eea}.st{display:flex;gap:15px;flex-wrap:wrap;margin:12px 0}.s{text-align:center;padding:8px 16px;background:#f0f2f5;border-radius:6px}.s b{font-size:22px;display:block}</style></head><body>
+<h1>📝 Test Report</h1><p>Generated: ${new Date().toLocaleString()} | Time: ${document.getElementById('tDisp').textContent}</p>
+<div class="st"><div class="s"><b>${s.att}/${s.TQ}</b>Attempted</div><div class="s"><b style="color:green">${s.cor}</b>Correct</div>
+<div class="s"><b style="color:red">${s.wrn}</b>Wrong</div><div class="s"><b style="color:purple">${fmt(s.sc)}</b>Score</div>
+<div class="s"><b style="color:orange">${s.acc}%</b>Accuracy</div></div>${sh}${qh}<script>window.print()<\/script></body></html>`);
+w.document.close()}
+
+/* SAVE / LOAD */
+function saveS(){try{localStorage.setItem('tPro',JSON.stringify({TQ,mk,ck,rv,secs,dCM:document.getElementById('dCM').value,dWM:document.getElementById('dWM').value,dk:document.body.classList.contains('dark')}))}catch(e){}}
+function ldS(){try{const d=JSON.parse(localStorage.getItem('tPro'));if(d){TQ=d.TQ||100;mk=d.mk||{};ck=d.ck||{};rv=d.rv||{};secs=d.secs||[];
+document.getElementById('inpTQ').value=TQ;if(d.dCM)document.getElementById('dCM').value=d.dCM;if(d.dWM)document.getElementById('dWM').value=d.dWM;
+if(d.dk){document.body.classList.add('dark');document.getElementById('dmL').textContent='☀️'}bldSec()}}catch(e){}}
+function resS(){for(const[n,o]of Object.entries(mk)){const b=document.getElementById('o'+n+o);if(b)b.classList.add('sel')}
+for(const[n,a]of Object.entries(ck)){const inp=document.getElementById('c'+n);if(inp){inp.value=a;show(+n)}}
+for(const n of Object.keys(rv)){const b=document.getElementById('rv'+n),rw=document.getElementById('r'+n);if(b)b.classList.add('fl');if(rw)rw.classList.add('rv')}}
+
+/* UTIL */
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmt(n){return n%1===0?n:n.toFixed(2)}
+</script>
+</body>
+</html>
